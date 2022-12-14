@@ -23,7 +23,7 @@ agent { label 'master' }
     steps{
       withCredentials([usernameColonPassword(credentialsId: 'docker_dileep_creds', variable: 'DOCKER_PASS')]) {
       sh 'docker push dileep95/dileep-spring:$BUILD_NUMBER'
-	  sh 'docker run -d -p 8050:8050 --name SpringbootApp dileep95/dileep-spring:$BUILD_NUMBER'
+	  sh 'docker run -d -p 80:80 --name SpringbootApp dileep95/dileep-spring:$BUILD_NUMBER'
     }
     }
   }  
