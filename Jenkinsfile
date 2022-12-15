@@ -11,7 +11,7 @@ agent { label 'master' }
         script {
           mvn= tool (name: 'Maven', type: 'maven') + '/bin/mvn'
         }
-        bat "${mvn} clean install"
+        cmd "${mvn} clean install"
       }
     }
   stage('Build Docker Image'){
