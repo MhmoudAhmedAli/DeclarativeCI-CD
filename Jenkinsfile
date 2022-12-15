@@ -24,6 +24,7 @@ agent { label 'master' }
      sh 'chmod +x delete_cont.sh'
      sh './delete_cont.sh'	      
     }
+	  }
   stage('Docker Container'){
     steps{
       withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'docker_pass', usernameVariable: 'docker_user')]) {
