@@ -19,6 +19,11 @@ agent { label 'master' }
       sh 'docker build -t dileep95/dileep-spring:$BUILD_NUMBER .'
     }
   }
+	  stage('Deleting docker images and Containers'){
+    steps{
+     sh 'chmod +x delete_cont.sh'
+     sh './delete_cont.sh'	      
+    }
   stage('Docker Container'){
     steps{
       withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'docker_pass', usernameVariable: 'docker_user')]) {
