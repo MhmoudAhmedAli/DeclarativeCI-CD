@@ -21,7 +21,7 @@ agent { label 'master' }
   }
   stage('Docker Container'){
     steps{
-      withCredentials([usernameColonPassword(credentialsId: '', variable: '')]) {
+      withCredentials([usernameColonPassword(credentialsId: 'docker_dileep_creds', variable: 'DOCKER_PASS')]) {
       sh 'docker push dileep95/dileep-spring:$BUILD_NUMBER'
 	  sh 'docker run -d -p 8050:8050 --name SpringbootApp dileep95/dileep-spring:$BUILD_NUMBER'
     }
