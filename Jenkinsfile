@@ -2,7 +2,7 @@ pipeline {
   agent { label 'built-in' }
 
   tools {
-    maven 'Maven'
+    maven 'Maven 3.9.9'
     jdk 'JAVA_HOME'
   }
 
@@ -10,7 +10,7 @@ pipeline {
     stage('Maven Build') {
       steps {
         script {
-          def mvn = tool(name: 'Maven', type: 'maven') + '/bin/mvn'
+          def mvn = tool(name: 'Maven 3.9.9', type: 'maven') + '/bin/mvn'
           sh "${mvn} clean install"
         }
       }
