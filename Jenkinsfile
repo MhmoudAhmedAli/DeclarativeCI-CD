@@ -1,16 +1,17 @@
 def mvn
 pipeline {
+  agent { }
     tools {
-      maven 'Maven 3.9.9'
+      maven 'Maven'
       jdk 'JAVA_HOME'
     }
   stages {
    stage ('Maven Build') {
       steps {
         script {
-          mvn= tool (name: 'Maven 3.9.9', type: 'maven') + '/bin/mvn'
+          mvn= tool (name: 'Maven', type: 'maven') + '/bin/mvn'
         }
-        sh "mvn clean install"
+        sh "${mvn} clean install"
       }
     }
   stage('Build Docker Image'){
@@ -20,9 +21,22 @@ pipeline {
   }
   stage('Docker Container'){
     steps{
+      withCredentials([usernameColonPassword(credentialsId: 'docker_dileep_creds', variable: 'DOCKER_PASS')]) {
+      sh 'docker push dileep95/dileep-spring:$BUILD_NUMBER'
 	  sh 'docker run -d -p 8050:8050 --name SpringbootApp dileep95/dileep-spring:$BUILD_NUMBER'
+    }
     }
   }  
 
   }
+post {
+    always {
+	mail bcc: '', body: "<br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br>URL: ${env.BUILD_URL}", cc: '', charset: 'UTF-8', from: '', mimeType: 'text/html', replyTo: '', subject: "Success: Project name -> ${env.JOB_NAME}", to: "prithdileep@gmail.com";
+    }
+    failure {
+	sh 'echo "This will run only if failed"'
+      mail bcc: '', body: "<br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br>URL: ${env.BUILD_URL}", cc: '', charset: 'UTF-8', from: '', mimeType: 'text/html', replyTo: '', subject: "ERROR: Project name -> ${env.JOB_NAME}", to: "prithdileep@gmail.com";
+    }
+  }
+}
 }
