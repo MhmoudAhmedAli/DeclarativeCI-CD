@@ -1,42 +1,54 @@
-def mvn
 pipeline {
   agent { label 'built-in' }
-    tools {
-      maven 'Maven'
-      jdk 'JAVA_HOME'
-    }
+
+  tools {
+    maven 'Maven'
+    jdk 'JAVA_HOME'
+  }
+
   stages {
-   stage ('Maven Build') {
+    stage('Maven Build') {
       steps {
         script {
-          mvn= tool (name: 'Maven', type: 'maven') + '/bin/mvn'
+          def mvn = tool(name: 'Maven', type: 'maven') + '/bin/mvn'
+          sh "${mvn} clean install"
         }
-        sh "${mvn} clean install"
       }
     }
-  stage('Build Docker Image'){
-    steps{
-      sh 'docker build -t dileep95/dileep-spring:$BUILD_NUMBER .'
-    }
-  }
-  stage('Docker Container'){
-    steps{
-      withCredentials([usernameColonPassword(credentialsId: 'docker_dileep_creds', variable: 'DOCKER_PASS')]) {
-      sh 'docker push dileep95/dileep-spring:$BUILD_NUMBER'
-	  sh 'docker run -d -p 8050:8050 --name SpringbootApp dileep95/dileep-spring:$BUILD_NUMBER'
-    }
-    }
-  }  
 
+    stage('Build Docker Image') {
+      steps {
+        sh 'docker build -t dileep95/dileep-spring:$BUILD_NUMBER .'
+      }
+    }
+
+    stage('Push Docker Image & Run Container') {
+      steps {
+        withCredentials([usernameColonPassword(credentialsId: 'docker_dileep_creds', variable: 'DOCKER_PASS')]) {
+          sh 'docker push dileep95/dileep-spring:$BUILD_NUMBER'
+          sh 'docker run -d -p 8050:8050 --name SpringbootApp dileep95/dileep-spring:$BUILD_NUMBER'
+        }
+      }
+    }
   }
-post {
+
+  post {
     always {
-	mail bcc: '', body: "<br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br>URL: ${env.BUILD_URL}", cc: '', charset: 'UTF-8', from: '', mimeType: 'text/html', replyTo: '', subject: "Success: Project name -> ${env.JOB_NAME}", to: "prithdileep@gmail.com";
+      mail(
+        to: 'prithdileep@gmail.com',
+        subject: "Success: Project name -> ${env.JOB_NAME}",
+        body: "<br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br>URL: ${env.BUILD_URL}",
+        mimeType: 'text/html'
+      )
     }
     failure {
-	sh 'echo "This will run only if failed"'
-      mail bcc: '', body: "<br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br>URL: ${env.BUILD_URL}", cc: '', charset: 'UTF-8', from: '', mimeType: 'text/html', replyTo: '', subject: "ERROR: Project name -> ${env.JOB_NAME}", to: "prithdileep@gmail.com";
+      sh 'echo "This will run only if failed"'
+      mail(
+        to: 'prithdileep@gmail.com',
+        subject: "ERROR: Project name -> ${env.JOB_NAME}",
+        body: "<br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br>URL: ${env.BUILD_URL}",
+        mimeType: 'text/html'
+      )
     }
   }
-}
 }
