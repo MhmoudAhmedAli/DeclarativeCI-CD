@@ -14,7 +14,7 @@ pipeline {
         sh "${mvn} clean install"
       }
     }
-    stage('Build Docker Image'){
+  stage('Build Docker Image'){
     steps{
       sh 'docker build -t dileep95/dileep-spring:$BUILD_NUMBER .'
     }
@@ -27,5 +27,7 @@ pipeline {
     }
     }
   }  
+
   }
 }
+
