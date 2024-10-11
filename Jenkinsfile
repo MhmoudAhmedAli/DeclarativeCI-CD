@@ -1,7 +1,7 @@
 def mvn
 pipeline {
-  agent { }
-    tools {
+ agent any
+tools {
       maven 'Maven'
       jdk 'JAVA_HOME'
     }
