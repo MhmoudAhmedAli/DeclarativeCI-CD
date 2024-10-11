@@ -31,24 +31,4 @@ pipeline {
       }
     }
   }
-
-  post {
-    always {
-      mail(
-        to: 'prithdileep@gmail.com',
-        subject: "Success: Project name -> ${env.JOB_NAME}",
-        body: "<br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br>URL: ${env.BUILD_URL}",
-        mimeType: 'text/html'
-      )
-    }
-    failure {
-      sh 'echo "This will run only if failed"'
-      mail(
-        to: 'prithdileep@gmail.com',
-        subject: "ERROR: Project name -> ${env.JOB_NAME}",
-        body: "<br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br>URL: ${env.BUILD_URL}",
-        mimeType: 'text/html'
-      )
-    }
-  }
 }
