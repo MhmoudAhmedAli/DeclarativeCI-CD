@@ -2,14 +2,14 @@ def mvn
 pipeline {
 agent { label 'master' }
     tools {
-      maven 'Maven'
+      maven 'Maven 3.9.9'
       jdk 'JAVA_HOME'
     }
   stages {
    stage ('Maven Build') {
       steps {
         script {
-          mvn= tool (name: 'Maven', type: 'maven') + '/bin/mvn'
+          mvn= tool (name: 'Maven 3.9.9', type: 'maven') + '/bin/mvn'
         }
         sh "mvn clean install"
       }
